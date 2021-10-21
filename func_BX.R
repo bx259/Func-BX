@@ -56,8 +56,8 @@
 fmt_BX <- function(
   .df,fn_txt = NULL,
   font = 'arial',size = 11,
-  classic = "Y",...){
-  dots = list(...)
+  classic = "Y"){
+  #dots = list(...)
   #if classic
   if (classic == 'Y') {
     temp <- 
@@ -66,7 +66,7 @@ fmt_BX <- function(
         lightable_options  = c( "hover",'striped',
                                 "condensed", "responsive"),
         font_size = !!size,html_font = !!font,full_width = FALSE,
-        fixed_thead = TRUE,!!!dots)) %>%
+        fixed_thead = TRUE)) %>%
       eval() %>%
       # common HTML css font
       kableExtra::kable_styling()  
@@ -77,7 +77,7 @@ fmt_BX <- function(
           bootstrap_options = c( "hover",'striped',
                                  "condensed", "responsive"),
           font_size = !!size,html_font = !!font,full_width = FALSE,
-          fixed_thead = TRUE,!!!dots)) %>%
+          fixed_thead = TRUE)) %>%
         eval()
         # common HTML css font
     }

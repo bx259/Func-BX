@@ -62,7 +62,7 @@ fmt_BX <- function(
   if (classic == 'Y') {
     temp <- 
       rlang::expr(kableExtra::kable_classic(
-        kable_input = .df,
+        kable_input = !!.df,
         lightable_options  = c( "hover",'striped',
                                 "condensed", "responsive"),
         font_size = !!size,html_font = !!font,full_width = FALSE,
@@ -73,7 +73,7 @@ fmt_BX <- function(
     }else{
       temp <- 
         rlang::expr(kableExtra::kable_styling(
-          kable_input = .df,
+          kable_input = !!.df,
           bootstrap_options = c( "hover",'striped',
                                  "condensed", "responsive"),
           font_size = !!size,html_font = !!font,full_width = FALSE,

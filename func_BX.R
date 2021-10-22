@@ -178,7 +178,7 @@ tb1_BX <- function(
   if (p_value == TRUE) {
     tb <- table1(col_name,row_name,
                  extra.col=list(`P-value`=pvalue),
-                 render.continuous=my.render.cont)%>%
+                 render.continuous=render.cont)%>%
       #skip groupspan as we didn't specify groupings
       as.data.frame()
   }else {

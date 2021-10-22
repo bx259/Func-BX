@@ -115,6 +115,7 @@ fmt_BX <- function(
 tb1_BX <- function(
   row_var,row_lab,
   row_fn,.df,
+  p_value = FALSE,
   col_var = NULL,fn_txt = NULL,
   cap = 'Patient Demographics',
   font = 'arial',size = 11,classic = "Y") {
@@ -143,14 +144,50 @@ tb1_BX <- function(
     #no strata variable specified
     col_name <- list('Total' = df_s)
   } else{
-    #strata variable specified
-    col_name <- c(split(df_s,pull(df_s,col_var)),list('Total' = df_s))
+    #strata variable specified with total column removed
+    col_name <- c(#list('Total' = df_s),
+                  split(df_s,pull(df_s,col_var)))
   }
+  
+  #define render functions (for nonnormal)
+  render.cont <-
+    function(x) {
+      with(lapply(stats.default(x),
+                  function(i){round(i,digits = 1)}), 
+           c("","Median [Min, Max]"=sprintf("%s [%s, %s]", MEDIAN, MIN,MAX)))
+    }
 
+  #define p-value calculation
+  pvalue <- function(x) {
+    # Construct vectors of data y, and groups (strata) g
+    y <- unlist(x)
+    g <- factor(rep(1:length(x), times=sapply(x, length)))
+    if (is.numeric(y)) {
+      # For numeric variables, perform a nonparametric kruskal test 
+      p <- kruskal.test(y ~ g)$p.value
+    } else {
+      # For categorical variables, perform a nonparametric fisher test of independence
+      p <- fisher.test(y,g)$p.value
+    }
+    # Format the p-value, using an HTML entity for the less-than sign.
+    # The initial empty string places the output on the line below the variable label.
+    c("", sub("<", "&lt;", format.pval(p, digits=2, eps=0.001)))
+  }
+  
   # create table one
-  tb <- table1(col_name,row_name) %>%
-    #skip groupspan as we didn't specify groupings
-    as.data.frame()
+  if (p_value == TRUE) {
+    tb <- table1(col_name,row_name,
+                 extra.col=list(`P-value`=pvalue),
+                 render.continuous=my.render.cont)%>%
+      #skip groupspan as we didn't specify groupings
+      as.data.frame()
+  }else {
+    tb <- table1(col_name,row_name,
+                 render.continuous=my.render.cont) %>%
+      #skip groupspan as we didn't specify groupings
+      as.data.frame()
+  }
+  
 
   # format and style
   tb %>%

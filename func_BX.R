@@ -183,7 +183,7 @@ tb1_BX <- function(
       as.data.frame()
   }else {
     tb <- table1(col_name,row_name,
-                 render.continuous=my.render.cont) %>%
+                 render.continuous=render.cont) %>%
       #skip groupspan as we didn't specify groupings
       as.data.frame()
   }

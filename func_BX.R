@@ -164,8 +164,12 @@ tb1_BX <- function(
     as.data.frame()
   
   #pull p-values through CreateTableOne
-  pvalue <- c(rep("",nrow(tb)))
-  pvalue[charmatch(row_lab,tb[,1])] <- 
+  
+  #set nulls 
+  pvalue1 <- c(rep("",nrow(tb)))
+  
+  #all the p-values
+  pvalue2 <- 
     print(CreateTableOne(vars = c(row_var,col_var), 
                          strata = col_var, 
                          data = df_s),
@@ -176,10 +180,17 @@ tb1_BX <- function(
     filter(p != '') %>%
     pull(p) 
   
+  #remove the p-value for comparing strata itself
+  pvalue2 <- pvalue2[-length(pvalue2)]
+  
+  #p-values and blanks
+  pvalue1[charmatch(row_lab,tb[,1])] <-
+    pvalue2
+  
   #add p-value or not
   if (p_value) {
     tb <- tb %>%
-      mutate("P-value" = pvalue)
+      mutate("P-value" = pvalue1)
   }
   
   # format and style
@@ -191,6 +202,8 @@ tb1_BX <- function(
     row_spec(charmatch(row_lab,tb[,1]),
              bold = T,italic = FALSE) %>%
     row_spec(0, color = 'white',background = "#666",bold = T)
+
+
 
   # %>%
   #   scroll_box(height = tbl_ht)

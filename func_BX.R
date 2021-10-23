@@ -167,7 +167,7 @@ tb1_BX <- function(
       p <- kruskal.test(y ~ g)$p.value
     } else {
       # For categorical variables, perform a nonparametric fisher test of independence
-      p <- fisher.test(y,g)$p.value
+      p <- fisher.test(table(y,g))$p.value
     }
     # Format the p-value, using an HTML entity for the less-than sign.
     # The initial empty string places the output on the line below the variable label.

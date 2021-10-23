@@ -163,36 +163,36 @@ tb1_BX <- function(
     #skip groupspan as we didn't specify groupings
     as.data.frame()
   
-  #pull p-values through CreateTableOne
-  
-  #set nulls 
-  pvalue1 <- c(rep("",nrow(tb)))
-  
-  #all the p-values
-  pvalue2 <- 
-    print(CreateTableOne(vars = c(row_var,col_var), 
-                         strata = col_var, 
-                         data = df_s),
-          nonnormal = nonnorm_var, 
-          exact = nonnorm_var,
-          formatOptions = list(big.mark = ",")) %>%
-    as.data.frame() %>%
-    filter(p != '') %>%
-    pull(p) 
-  
-  #remove the p-value for comparing strata itself
-  pvalue2 <- pvalue2[-length(pvalue2)]
-  
-  #p-values and blanks
-  pvalue1[charmatch(row_lab,tb[,1])] <-
-    pvalue2
-  
   #add p-value or not
   if (p_value) {
+    
+    #pull p-values through CreateTableOne
+    
+    #set nulls 
+    pvalue1 <- c(rep("",nrow(tb)))
+    
+    #all the p-values
+    pvalue2 <- 
+      print(CreateTableOne(vars = c(row_var,col_var), 
+                           strata = col_var, 
+                           data = df_s),
+            nonnormal = nonnorm_var, 
+            exact = nonnorm_var,
+            formatOptions = list(big.mark = ",")) %>%
+      as.data.frame() %>%
+      filter(p != '') %>%
+      pull(p) 
+    
+    #remove the p-value for comparing strata itself
+    pvalue2 <- pvalue2[-length(pvalue2)]
+    
+    #p-values and blanks
+    pvalue1[charmatch(row_lab,tb[,1])] <-
+      pvalue2
+    
+    #add p-values to the table
     tb[,'P-value'] <- pvalue1
   }
-  
-  # return(tb)
   
   # format and style
   tb %>%

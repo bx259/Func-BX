@@ -189,9 +189,10 @@ tb1_BX <- function(
   
   #add p-value or not
   if (p_value) {
-    tb <- tb %>%
-      mutate("P-value" = pvalue1)
+    tb[,'P-value'] <- pvalue1
   }
+  
+  # return(tb)
   
   # format and style
   tb %>%

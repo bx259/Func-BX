@@ -176,7 +176,8 @@ tb1_BX <- function(
       print(CreateTableOne(vars = c(row_var,col_var), 
                            strata = col_var, 
                            data = df_s),
-            nonnormal = nonnorm_var, 
+            nonnormal = nonnorm_var,
+            printToggle = FALSE,
             exact = nonnorm_var,
             formatOptions = list(big.mark = ",")) %>%
       as.data.frame() %>%

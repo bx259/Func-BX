@@ -115,8 +115,8 @@ fmt_BX <- function(
 tb1_BX <- function(
   row_var,row_lab,
   row_fn,.df,
-  p_value = FALSE,
-  col_var = NULL,fn_txt = NULL,
+  col_var = NULL,nonnorm_var = NULL,
+  p_value = FALSE,fn_txt = NULL,
   cap = 'Patient Demographics',
   font = 'arial',size = 11,classic = "Y") {
   # as groups lose when converting to df, we don't define groups here
@@ -144,8 +144,8 @@ tb1_BX <- function(
     #no strata variable specified
     col_name <- list('Total' = df_s)
   } else{
-    #strata variable specified with total column removed
-    col_name <- c(#list('Total' = df_s),
+    #strata variable specified with total column added
+    col_name <- c(list('Total' = df_s),
                   split(df_s,pull(df_s,col_var)))
   }
   
@@ -156,39 +156,32 @@ tb1_BX <- function(
                   function(i){round(i,digits = 1)}), 
            c("","Median [Min, Max]"=sprintf("%s [%s, %s]", MEDIAN, MIN,MAX)))
     }
-
-  #define p-value calculation
-  pvalue <- function(x) {
-    # Construct vectors of data y, and groups (strata) g
-    y <- unlist(x)
-    g <- factor(rep(1:length(x), times=sapply(x, length)))
-    if (is.numeric(y)) {
-      # For numeric variables, perform a nonparametric kruskal test 
-      p <- kruskal.test(y ~ g)$p.value
-    } else {
-      # For categorical variables, perform a nonparametric fisher test of independence
-      p <- fisher.test(table(y,g))$p.value
-    }
-    # Format the p-value, using an HTML entity for the less-than sign.
-    # The initial empty string places the output on the line below the variable label.
-    c("", sub("<", "&lt;", format.pval(p, digits=2, eps=0.001)))
+  
+  #creat table 1
+  tb <- table1(col_name,row_name,
+               render.continuous=render.cont) %>%
+    #skip groupspan as we didn't specify groupings
+    as.data.frame()
+  
+  #pull p-values through CreateTableOne
+  pvalue <- c(rep("",nrow(tb)))
+  pvalue[charmatch(row_lab,tb[,1])] <- 
+    print(CreateTableOne(vars = c(row_var,col_var), 
+                         strata = col_var, 
+                         data = df_s),
+          nonnormal = nonnorm_var, 
+          exact = nonnorm_var,
+          formatOptions = list(big.mark = ",")) %>%
+    as.data.frame() %>%
+    filter(p != '') %>%
+    pull(p) 
+  
+  #add p-value or not
+  if (p_value) {
+    tb <- tb %>%
+      mutate("P-value" = pvalue)
   }
   
-  # create table one
-  if (p_value == TRUE) {
-    tb <- table1(col_name,row_name,
-                 extra.col=list(`P-value`=pvalue),
-                 render.continuous=render.cont)%>%
-      #skip groupspan as we didn't specify groupings
-      as.data.frame()
-  }else {
-    tb <- table1(col_name,row_name,
-                 render.continuous=render.cont) %>%
-      #skip groupspan as we didn't specify groupings
-      as.data.frame()
-  }
-  
-
   # format and style
   tb %>%
     kbl(caption = cap,

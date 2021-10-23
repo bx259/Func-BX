@@ -177,9 +177,10 @@ tb1_BX <- function(
                            strata = col_var, 
                            data = df_s),
             nonnormal = nonnorm_var,
-            printToggle = FALSE,
             exact = nonnorm_var,
-            formatOptions = list(big.mark = ",")) %>%
+            formatOptions = list(big.mark = ","),
+            #don't print output
+            printToggle = FALSE) %>%
       as.data.frame() %>%
       filter(p != '') %>%
       pull(p) 
@@ -192,7 +193,7 @@ tb1_BX <- function(
       pvalue2
     
     #add p-values to the table
-    tb[,'P-value'] <- pvalue1
+    tb[,`P-value`] <- pvalue1
   }
   
   # format and style

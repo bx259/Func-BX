@@ -145,7 +145,7 @@ tb1_BX <- function(
     col_name <- list('Total' = df_s)
   } else{
     #strata variable specified with total column added
-    col_name <- c(list('Total' = df_s),
+    col_name <- c(#list('Total' = df_s),
                   split(df_s,pull(df_s,col_var)))
   }
   

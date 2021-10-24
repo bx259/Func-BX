@@ -193,7 +193,7 @@ tb1_BX <- function(
       pvalue2
     
     #add p-values to the table
-    tb[,`P-value`] <- pvalue1
+    tb[,"P"] <- pvalue1
   }
   
   # format and style

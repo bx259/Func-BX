@@ -1,7 +1,5 @@
 # Old version(s)
 
-# check 
-
 # #crate a function for adding labels and footnote for variables of interest
 # tbl1_prep <- function(
 #   cat_var,cat_lab,
